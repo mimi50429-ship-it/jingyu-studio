@@ -47,6 +47,7 @@ const todayISO = () => new Date().toISOString().split('T')[0]
 
 // ─── Firebase helpers ─────────────────────────────────────────────────────────
 const COL = 'bookings'
+const BLOCK_COL = 'blocked_slots'
 async function fbAdd(data)   { return addDoc(collection(db, COL), data) }
 async function fbUpdate(id, data) { return updateDoc(doc(db, COL, id), data) }
 async function fbDelete(id)  { return deleteDoc(doc(db, COL, id)) }
@@ -63,6 +64,11 @@ export default function App() {
   const [showLogin, setShowLogin] = useState(false)
   const [pwInput, setPwInput]     = useState('')
   const [pwErr, setPwErr]         = useState(false)
+  const [blockedSlots, setBlockedSlots] = useState([])
+  const [blockDate, setBlockDate]   = useState(todayISO())
+  const [blockSelSlots, setBlockSelSlots] = useState([])
+  const [blockNote, setBlockNote]   = useState('')
+  const [blockLoading, setBlockLoading] = useState(false)
 
   // Booking form
   const [plan, setPlan]         = useState('A')
@@ -96,6 +102,15 @@ export default function App() {
     return unsub
   }, [])
 
+  // ── Blocked slots listener ───────────────────────────────────────────────
+  useEffect(() => {
+    const q2 = query(collection(db, BLOCK_COL), orderBy('createdAt', 'desc'))
+    const unsub2 = onSnapshot(q2, snap => {
+      setBlockedSlots(snap.docs.map(d => ({ ...d.data(), _id: d.id })))
+    }, err => console.error(err))
+    return unsub2
+  }, [])
+
   // ── Toast ─────────────────────────────────────────────────────────────────
   function showToast(msg, type = 'ok') {
     setToast({ msg, type })
@@ -117,6 +132,10 @@ export default function App() {
           s.add(fmtTime(Math.floor(cur / 60), cur % 60)); cur += 30
         }
       })
+    // also add manually blocked slots
+    blockedSlots
+      .filter(b => b.date === d)
+      .forEach(b => { b.slots.forEach(sl => s.add(sl)) })
     return s
   }
 
@@ -202,6 +221,27 @@ export default function App() {
     if (!window.confirm('確定刪除此預約紀錄？')) return
     try { await fbDelete(id); showToast('已刪除紀錄') }
     catch { showToast('刪除失敗', 'err') }
+  }
+
+  // ── Block slots ──────────────────────────────────────────────────────────
+  async function adminBlockSlots() {
+    if (!blockDate || blockSelSlots.length === 0) { showToast('請選擇日期與時段', 'err'); return }
+    setBlockLoading(true)
+    try {
+      await addDoc(collection(db, BLOCK_COL), {
+        date: blockDate,
+        slots: blockSelSlots,
+        note: blockNote.trim() || '管理員封鎖',
+        createdAt: new Date().toISOString(),
+      })
+      showToast(`✓ 已封鎖 ${blockSelSlots.length} 個時段`)
+      setBlockSelSlots([]); setBlockNote('')
+    } catch(e) { showToast('封鎖失敗：'+e.message, 'err') }
+    setBlockLoading(false)
+  }
+  async function adminUnblock(id) {
+    try { await deleteDoc(doc(db, BLOCK_COL, id)); showToast('已解除封鎖') }
+    catch { showToast('操作失敗', 'err') }
   }
 
   // ── Calendar cells ────────────────────────────────────────────────────────
@@ -641,6 +681,63 @@ export default function App() {
                   </div>
                 )
               })}
+            </div>
+          </div>
+        </div>
+
+          {/* Block slots panel */}
+          <div style={card}>
+            <div style={cHead}>🔒 手動封鎖時段</div>
+            <div style={cBody}>
+              <div style={{ fontSize:12, color:C.muted, marginBottom:'1rem', lineHeight:1.7 }}>
+                封鎖後該時段在預約頁面顯示為灰色不可選，適合用於清潔維護、個人使用等情境。
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem', marginBottom:'1rem' }}>
+                <div>
+                  <div style={lbl}>選擇日期</div>
+                  <input type="date" style={inp} value={blockDate} min={todayISO()} onChange={e => { setBlockDate(e.target.value); setBlockSelSlots([]) }} />
+                </div>
+                <div>
+                  <div style={lbl}>備註原因</div>
+                  <input style={inp} value={blockNote} onChange={e => setBlockNote(e.target.value)} placeholder="例：清潔維護、個人使用…" />
+                </div>
+              </div>
+              <div style={lbl}>選擇要封鎖的時段（可多選）</div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(6,1fr)', gap:5, marginBottom:'1rem' }}>
+                {allSlots().map(sl => {
+                  const isSel = blockSelSlots.includes(sl)
+                  const isTaken = getTakenSlots(blockDate).has(sl)
+                  return (
+                    <div key={sl} onClick={() => !isTaken && setBlockSelSlots(prev => isSel ? prev.filter(s=>s!==sl) : [...prev,sl])}
+                      style={{ padding:'6px 3px', border:`1px solid ${isSel ? '#C0392B' : isTaken ? '#E8E5DF' : C.border}`, borderRadius:7, textAlign:'center', fontSize:11, cursor: isTaken ? 'not-allowed' : 'pointer', background: isSel ? '#FFDDD9' : isTaken ? '#F5F3EE' : C.white, color: isSel ? '#C0392B' : isTaken ? '#C0BCB3' : C.text, transition:'all .15s' }}>
+                      {sl}
+                    </div>
+                  )
+                })}
+              </div>
+              <div style={{ display:'flex', gap:10, alignItems:'center' }}>
+                <button onClick={adminBlockSlots} disabled={blockLoading || blockSelSlots.length===0}
+                  style={{ ...btn('danger'), opacity: blockSelSlots.length===0 ? 0.5 : 1 }}>
+                  {blockLoading ? '封鎖中…' : `🔒 封鎖已選 ${blockSelSlots.length} 個時段`}
+                </button>
+                {blockSelSlots.length > 0 && <button onClick={() => setBlockSelSlots([])} style={btn('outline')}>清除選擇</button>}
+              </div>
+
+              {/* Existing blocks */}
+              {blockedSlots.length > 0 && (
+                <div style={{ marginTop:'1.5rem' }}>
+                  <div style={{ fontSize:13, fontWeight:500, marginBottom:10 }}>已封鎖的時段紀錄</div>
+                  {blockedSlots.map(b => (
+                    <div key={b._id} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'10px 12px', border:`1px solid #F0C0C0`, borderRadius:10, marginBottom:8, background:'#FFF8F8' }}>
+                      <div>
+                        <div style={{ fontSize:12, fontWeight:500, color:C.danger, marginBottom:2 }}>{fmtDate(b.date)} · {b.slots.join('、')}</div>
+                        <div style={{ fontSize:11, color:C.muted }}>{b.note} · {new Date(b.createdAt).toLocaleString('zh-TW')}</div>
+                      </div>
+                      <button style={{ ...btn('outline'), fontSize:12, padding:'5px 10px', color:C.success, borderColor:'#C0DCC0', flexShrink:0 }} onClick={() => adminUnblock(b._id)}>解除封鎖</button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
