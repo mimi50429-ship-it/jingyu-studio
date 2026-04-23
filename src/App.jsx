@@ -271,17 +271,17 @@ export default function App() {
 
   // ── Styles ────────────────────────────────────────────────────────────────
   const C = {
-    sage:'#7A9178',        // 植物深綠
-    sageDark:'#4A6652',    // 深森林綠
-    sageLight:'#C8D9C4',   // 淺葉綠
-    cream:'#F2EDE4',       // 奶油米白（主背景）
-    border:'#DDD6CA',      // 溫暖米色邊框
-    muted:'#9A9185',       // 暖灰文字
-    text:'#2E2A24',        // 深棕黑文字
-    gold:'#A8916A',        // 暖木色
-    white:'rgba(250,247,242,0.92)',  // 半透明暖白（卡片背景）
-    danger:'#B5483A',      // 磚紅
-    success:'#4A7C59',     // 自然綠
+    sage:'#DFA0AA',        // Sea Pink - 按鈕、選中狀態
+    sageDark:'#845F4A',    // Roman Coffee - 強調、標題
+    sageLight:'#F5E8E0',   // 淺粉膚色 - 背景點綴
+    cream:'#F0EDDC',       // Eggshell 主背景
+    border:'#D9D0BC',      // Stone 邊框
+    muted:'#B9AC8C',       // Stone 次要文字
+    text:'#4A3728',        // 深棕主文字
+    gold:'#B9AC8C',        // Stone 點綴
+    white:'#FDFAF5',       // 暖白卡片
+    danger:'#C0392B',
+    success:'#7A9178',
   }
   const card  = { background: C.white, border: `1px solid ${C.border}`, borderRadius: 12, overflow: 'hidden', marginBottom: '1rem' }
   const cHead = { padding: '1rem 1.4rem', borderBottom: `1px solid ${C.border}`, fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }
@@ -291,11 +291,11 @@ export default function App() {
   const btn   = (v='primary') => ({
     border: 'none', borderRadius: 9, padding: '10px 16px', fontSize: 13, fontWeight: 500,
     cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.04em', transition: 'all .2s',
-    ...(v==='primary'  ? {background:C.sage,    color:'#fff'} : {}),
+    ...(v==='primary'  ? {background:C.sageDark, color:'#fff'} : {}),
     ...(v==='outline'  ? {background:C.white,   color:C.text,    border:`1px solid ${C.border}`} : {}),
     ...(v==='danger'   ? {background:C.white,   color:C.danger,  border:`1px solid #F0C0C0`} : {}),
     ...(v==='success'  ? {background:C.white,   color:C.success, border:`1px solid #C0DCC0`} : {}),
-    ...(v==='gold'     ? {background:'#FDF6E8', color:C.gold,    border:`1px solid #E8D8B0`} : {}),
+    ...(v==='gold'     ? {background:'#EDE7D9', color:C.sageDark, border:`1px solid ${C.border}`} : {}),
   })
   const tabStyle = (active) => ({
     padding: '0.8rem 1rem', fontSize: 13, cursor: 'pointer',
@@ -308,12 +308,12 @@ export default function App() {
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div style={{ fontFamily: "'Noto Sans TC', sans-serif", minHeight: '100vh', background: 'transparent', color: C.text, letterSpacing: '0.01em' }}>
+    <div style={{ fontFamily: "'Noto Sans TC', sans-serif", minHeight: '100vh', background: C.cream, color: C.text, letterSpacing: '0.01em' }}>
 
       {/* ── Header ── */}
-      <div style={{ background: 'rgba(250,247,242,0.95)', borderBottom: `1px solid ${C.border}`, padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', backdropFilter: 'blur(8px)' }}>
+      <div style={{ background: C.white, borderBottom: `1px solid ${C.border}`, padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 38, height: 38, background: C.sage, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 14, fontFamily: 'Noto Serif TC, serif', flexShrink: 0 }}>京</div>
+          <div style={{ width: 38, height: 38, background: C.sageDark, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 14, fontFamily: 'Noto Serif TC, serif', flexShrink: 0 }}>京</div>
           <div>
             <div style={{ fontFamily: 'Noto Serif TC, serif', fontSize: 17, fontWeight: 400, letterSpacing: '0.05em' }}>京雨美學坊</div>
             <div style={{ fontSize: 11, color: C.muted, letterSpacing: '0.06em' }}>嘉義市秀園新村 No.5, 2F</div>
@@ -351,7 +351,7 @@ export default function App() {
       )}
 
       {/* ── Tabs ── */}
-      <div style={{ background: 'rgba(250,247,242,0.95)', borderBottom: `1px solid ${C.border}`, display: 'flex', padding: '0 1.5rem', gap: 2, backdropFilter: 'blur(8px)' }}>
+      <div style={{ background: C.white, borderBottom: `1px solid ${C.border}`, display: 'flex', padding: '0 1.5rem', gap: 2 }}>
         {[['booking','預約租用'],['calendar','日曆總覽'],['rules','注意事項'],['space','空間介紹'],
           ...(isAdmin ? [['admin','管理後台']] : [])
         ].map(([id, label]) => (
