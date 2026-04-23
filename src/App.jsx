@@ -279,7 +279,7 @@ export default function App() {
     muted:'#9A9185',       // 暖灰文字
     text:'#2E2A24',        // 深棕黑文字
     gold:'#A8916A',        // 暖木色
-    white:'#FAF7F2',       // 暖白（卡片背景）
+    white:'rgba(250,247,242,0.92)',  // 半透明暖白（卡片背景）
     danger:'#B5483A',      // 磚紅
     success:'#4A7C59',     // 自然綠
   }
@@ -308,10 +308,10 @@ export default function App() {
 
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div style={{ fontFamily: "'Noto Sans TC', sans-serif", minHeight: '100vh', background: C.cream, color: C.text, letterSpacing: '0.01em' }}>
+    <div style={{ fontFamily: "'Noto Sans TC', sans-serif", minHeight: '100vh', background: 'transparent', color: C.text, letterSpacing: '0.01em' }}>
 
       {/* ── Header ── */}
-      <div style={{ background: C.white, borderBottom: `1px solid ${C.border}`, padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: 'rgba(250,247,242,0.95)', borderBottom: `1px solid ${C.border}`, padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', backdropFilter: 'blur(8px)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 38, height: 38, background: C.sage, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 14, fontFamily: 'Noto Serif TC, serif', flexShrink: 0 }}>京</div>
           <div>
@@ -351,7 +351,7 @@ export default function App() {
       )}
 
       {/* ── Tabs ── */}
-      <div style={{ background: C.white, borderBottom: `1px solid ${C.border}`, display: 'flex', padding: '0 1.5rem', gap: 2 }}>
+      <div style={{ background: 'rgba(250,247,242,0.95)', borderBottom: `1px solid ${C.border}`, display: 'flex', padding: '0 1.5rem', gap: 2, backdropFilter: 'blur(8px)' }}>
         {[['booking','預約租用'],['calendar','日曆總覽'],['rules','注意事項'],['space','空間介紹'],
           ...(isAdmin ? [['admin','管理後台']] : [])
         ].map(([id, label]) => (
