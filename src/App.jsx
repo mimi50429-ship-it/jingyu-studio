@@ -683,10 +683,10 @@ export default function App() {
               })}
             </div>
           </div>
-        </div>
+
 
           <div style={card}>
-            <div style={cHead}>🔒 手動封鎖時段</div>
+            <div style={cHead}>{'🔒'} 手動封鎖時段</div>
             <div style={cBody}>
               <div style={{ fontSize:12, color:C.muted, marginBottom:'1rem', lineHeight:1.7 }}>
                 封鎖後該時段在預約頁面顯示為灰色不可選，適合用於清潔維護、個人使用等情境。
@@ -717,7 +717,7 @@ export default function App() {
               <div style={{ display:'flex', gap:10, alignItems:'center' }}>
                 <button onClick={adminBlockSlots} disabled={blockLoading || blockSelSlots.length===0}
                   style={{ ...btn('danger'), opacity: blockSelSlots.length===0 ? 0.5 : 1 }}>
-                  {blockLoading ? '封鎖中…' : `🔒 封鎖已選 ${blockSelSlots.length} 個時段`}
+                  {blockLoading ? '封鎖中…' : '封鎖已選 '+blockSelSlots.length+' 個時段'}
                 </button>
                 {blockSelSlots.length > 0 && <button onClick={() => setBlockSelSlots([])} style={btn('outline')}>清除選擇</button>}
               </div>
