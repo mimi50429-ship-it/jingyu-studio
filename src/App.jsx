@@ -271,25 +271,25 @@ export default function App() {
 
   // ── Styles ────────────────────────────────────────────────────────────────
   const C = {
-    sage:'#DFA0AA',        // Sea Pink - 按鈕、選中狀態
-    sageDark:'#845F4A',    // Roman Coffee - 強調、標題
-    sageLight:'#F5E8E0',   // 淺粉膚色 - 背景點綴
-    cream:'#F0EDDC',       // Eggshell 主背景
-    border:'#D9D0BC',      // Stone 邊框
-    muted:'#B9AC8C',       // Stone 次要文字
-    text:'#4A3728',        // 深棕主文字
-    gold:'#B9AC8C',        // Stone 點綴
-    white:'#FDFAF5',       // 暖白卡片
-    danger:'#C0392B',
-    success:'#7A9178',
+    sage:     '#C9B8A8',   // warm taupe - 選中、active
+    sageDark: '#7D5A4F',   // deep mocha - 按鈕、logo
+    sageLight:'#EDE3D8',   // light linen - hover bg
+    cream:    '#F5EFE6',   // main bg
+    border:   '#DDD0C0',   // warm border
+    muted:    '#A89880',   // stone text
+    text:     '#3D2B1F',   // dark espresso
+    gold:     '#C9A96E',   // warm gold
+    white:    '#FDFAF6',   // warm white card
+    danger:   '#B5483A',
+    success:  '#7A9178',
   }
-  const card  = { background: C.white, border: `1px solid ${C.border}`, borderRadius: 12, overflow: 'hidden', marginBottom: '1rem' }
-  const cHead = { padding: '1rem 1.4rem', borderBottom: `1px solid ${C.border}`, fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }
+  const card  = { background: C.white, border: `1px solid ${C.border}`, borderRadius: 20, overflow: 'hidden', marginBottom: '1rem' }
+  const cHead = { padding: '1rem 1.6rem', borderBottom: `1px solid ${C.border}`, fontSize: 15, fontWeight: 400, display: 'flex', alignItems: 'center', gap: 8, letterSpacing: '0.06em', fontFamily: "'Cormorant Garamond', 'Noto Serif TC', serif", color: C.sageDark }
   const cBody = { padding: '1.4rem' }
   const lbl   = { fontSize: 12, color: C.muted, marginBottom: 5, display: 'block', letterSpacing: '0.03em' }
   const inp   = { width: '100%', border: `1px solid ${C.border}`, borderRadius: 8, padding: '9px 12px', fontSize: 14, fontFamily: 'inherit', color: C.text, background: C.white, outline: 'none' }
   const btn   = (v='primary') => ({
-    border: 'none', borderRadius: 9, padding: '10px 16px', fontSize: 13, fontWeight: 500,
+    border: 'none', borderRadius: 50, padding: '11px 20px', fontSize: 13, fontWeight: 400, letterSpacing: '0.08em',
     cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.04em', transition: 'all .2s',
     ...(v==='primary'  ? {background:C.sageDark, color:'#fff'} : {}),
     ...(v==='outline'  ? {background:C.white,   color:C.text,    border:`1px solid ${C.border}`} : {}),
@@ -299,10 +299,10 @@ export default function App() {
   })
   const tabStyle = (active) => ({
     padding: '0.8rem 1rem', fontSize: 13, cursor: 'pointer',
-    borderBottom: active ? `2px solid ${C.sage}` : '2px solid transparent',
+    borderBottom: active ? `2px solid ${C.sageDark}` : '2px solid transparent',
     color: active ? C.sageDark : C.muted,
     background: 'none', border: 'none',
-    borderBottom: active ? `2px solid ${C.sage}` : '2px solid transparent',
+    borderBottom: active ? `2px solid ${C.sageDark}` : '2px solid transparent',
     fontFamily: 'inherit', letterSpacing: '0.03em', transition: 'all .2s',
   })
 
@@ -311,11 +311,11 @@ export default function App() {
     <div style={{ fontFamily: "'Noto Sans TC', sans-serif", minHeight: '100vh', background: C.cream, color: C.text, letterSpacing: '0.01em' }}>
 
       {/* ── Header ── */}
-      <div style={{ background: C.white, borderBottom: `1px solid ${C.border}`, padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: '#FDFAF6', borderBottom: `1px solid ${C.border}`, padding: '1.1rem 1.8rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 38, height: 38, background: C.sageDark, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 14, fontFamily: 'Noto Serif TC, serif', flexShrink: 0 }}>京</div>
+          <div style={{ width: 42, height: 42, background: C.sageDark, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 15, fontFamily: "'Cormorant Garamond', serif", flexShrink: 0, letterSpacing: '0.05em' }}>京</div>
           <div>
-            <div style={{ fontFamily: 'Noto Serif TC, serif', fontSize: 17, fontWeight: 400, letterSpacing: '0.05em' }}>京雨美學坊</div>
+            <div style={{ fontFamily: "'Cormorant Garamond', 'Noto Serif TC', serif", fontSize: 20, fontWeight: 500, letterSpacing: '0.1em' }}>京雨美學坊</div>
             <div style={{ fontSize: 11, color: C.muted, letterSpacing: '0.06em' }}>嘉義市秀園新村 No.5, 2F</div>
           </div>
         </div>
@@ -357,7 +357,7 @@ export default function App() {
         ].map(([id, label]) => (
           <button key={id} style={tabStyle(tab===id)} onClick={() => setTab(id)}>
             {label}
-            {id==='admin' && <span style={{ marginLeft:4, fontSize:10, background:C.gold, color:'#fff', borderRadius:4, padding:'1px 5px' }}>管</span>}
+            {id==='admin' && <span style={{ marginLeft:4, fontSize:10, background:C.sageDark, color:'#fff', borderRadius:4, padding:'1px 5px' }}>管</span>}
           </button>
         ))}
       </div>
@@ -371,7 +371,7 @@ export default function App() {
 
       {/* ═══════════════ BOOKING ═══════════════ */}
       {tab==='booking' && (
-        <div style={{ padding:'1.5rem', maxWidth:940, margin:'0 auto' }}>
+        <div style={{ padding:'2rem 1.5rem', maxWidth:940, margin:'0 auto' }}>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 300px', gap:'1.2rem' }}>
             <div>
               {/* Plan selector */}
@@ -382,9 +382,9 @@ export default function App() {
                     {[['A','時租','$150','/ 1h','1小時起租，每追加30分 $75'],
                       ['B','日租','$800','/ 8h', '每日8小時整包，適合全日服務']].map(([p,l,price,unit,n]) => (
                       <div key={p} onClick={() => { setPlan(p); setExtraHalf(false) }}
-                        style={{ border:`1.5px solid ${plan===p ? C.sage : C.border}`, borderRadius:10, padding:'1rem', cursor:'pointer', background: plan===p ? 'rgba(139,158,139,0.06)' : C.white, position:'relative', transition:'all .2s' }}>
+                        style={{ border:`1.5px solid ${plan===p ? C.sageDark : C.border}`, borderRadius:16, padding:'1rem', cursor:'pointer', background: plan===p ? 'rgba(139,158,139,0.06)' : C.white, position:'relative', transition:'all .2s' }}>
                         <div style={{ fontSize:11, fontWeight:500, color:C.sageDark, letterSpacing:'0.06em', marginBottom:3 }}>{p} 方案・{l}</div>
-                        <div style={{ fontFamily:'Noto Serif TC, serif', fontSize:22 }}>
+                        <div style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:26, fontWeight:500 }}>
                           {price}<span style={{ fontSize:12, color:C.muted, fontFamily:'inherit' }}> {unit}</span>
                         </div>
                         <div style={{ fontSize:11, color:C.muted, marginTop:4, lineHeight:1.6 }}>{n}</div>
@@ -442,7 +442,7 @@ export default function App() {
                       const tk = taken.has(sl), sel = slot===sl
                       return (
                         <div key={sl} onClick={() => !tk && setSlot(sl)}
-                          style={{ padding:'7px 4px', border:`1px solid ${sel ? C.sage : tk ? '#E8E5DF' : C.border}`, borderRadius:7, textAlign:'center', fontSize:12, cursor: tk ? 'not-allowed' : 'pointer', background: sel ? C.sage : tk ? '#F5F3EE' : C.white, color: sel ? '#fff' : tk ? '#C0BCB3' : C.text, transition:'all .15s' }}>
+                          style={{ padding:'7px 4px', border:`1px solid ${sel ? C.sageDark : tk ? '#E8E5DF' : C.border}`, borderRadius:20, textAlign:'center', fontSize:12, cursor: tk ? 'not-allowed' : 'pointer', background: sel ? C.sageDark : tk ? '#F0EDE8' : C.white, color: sel ? '#fff' : tk ? '#C0BCB3' : C.text, transition:'all .15s' }}>
                           {sl}
                         </div>
                       )
@@ -495,7 +495,7 @@ export default function App() {
                   ))}
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', paddingTop:12, marginTop:8, borderTop:`1.5px solid ${C.border}` }}>
                     <span style={{ fontSize:13, fontWeight:500 }}>合計</span>
-                    <span style={{ fontFamily:'Noto Serif TC, serif', fontSize:26, color:C.sageDark }}>${calcPrice()}</span>
+                    <span style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:30, fontWeight:500, color:C.sageDark }}>${calcPrice()}</span>
                   </div>
                   <button onClick={addToGCal} style={{ ...btn('outline'), width:'100%', marginTop:10, display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
                     <span style={{ fontSize:16 }}>📅</span> 加入 Google 日曆
@@ -522,7 +522,7 @@ export default function App() {
               <div style={cBody}>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1.2rem' }}>
                   <StepBtn onClick={() => { if(calM===0){setCalM(11);setCalY(y=>y-1)}else setCalM(m=>m-1) }}>‹</StepBtn>
-                  <div style={{ fontFamily:'Noto Serif TC, serif', fontSize:18 }}>{calY}年 {MONTHS_TW[calM]}月</div>
+                  <div style={{ fontFamily:"'Cormorant Garamond', 'Noto Serif TC', serif", fontSize:22, fontWeight:400, letterSpacing:'0.06em' }}>{calY}年 {MONTHS_TW[calM]}月</div>
                   <StepBtn onClick={() => { if(calM===11){setCalM(0);setCalY(y=>y+1)}else setCalM(m=>m+1) }}>›</StepBtn>
                 </div>
                 <div style={{ display:'grid', gridTemplateColumns:'repeat(7,1fr)', gap:3 }}>
@@ -574,10 +574,10 @@ export default function App() {
       {/* ═══════════════ RULES ═══════════════ */}
       {tab==='rules' && (
         <div style={{ padding:'1.5rem', maxWidth:700, margin:'0 auto' }}>
-          <div style={{ fontFamily:'Noto Serif TC, serif', fontSize:22, marginBottom:'0.3rem' }}>注意事項與規範</div>
+          <div style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:26, fontWeight:500, marginBottom:'0.3rem' }}>注意事項與規範</div>
           <div style={{ fontSize:13, color:C.muted, marginBottom:'1.5rem' }}>預約完成即視同租用人同意遵守以下規則</div>
           {RULES.map((r,i) => (
-            <div key={i} style={{ ...card, marginBottom:10 }}>
+            <div key={i} style={{ ...card, marginBottom:10, borderRadius:18 }}>
               <div style={{ padding:'1rem 1.4rem', display:'flex', gap:14, alignItems:'flex-start' }}>
                 <div style={{ width:36, height:36, background:'#F0EDE6', borderRadius:9, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, flexShrink:0 }}>{r.icon}</div>
                 <div>
@@ -613,7 +613,7 @@ export default function App() {
                   ['B 方案・日租','$800 / 8h', '每日8小時整包，適合全日服務排程']].map(([t,p,n]) => (
                   <div key={t} style={{ border:`1px solid ${C.border}`, borderRadius:10, padding:'1rem', background:'#FAFAF7' }}>
                     <div style={{ fontSize:11, fontWeight:500, color:C.sageDark, letterSpacing:'0.06em', marginBottom:4 }}>{t}</div>
-                    <div style={{ fontFamily:'Noto Serif TC, serif', fontSize:20, marginBottom:6 }}>{p}</div>
+                    <div style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:24, fontWeight:500, marginBottom:6 }}>{p}</div>
                     <div style={{ fontSize:12, color:C.muted, lineHeight:1.6 }}>{n}</div>
                   </div>
                 ))}
@@ -647,7 +647,7 @@ export default function App() {
             {[['今日預約', todayCount+' 筆'],['本月預約', monthCount+' 筆'],['本月收益', '$'+monthRevenue.toLocaleString()]].map(([k,v]) => (
               <div key={k} style={{ background:C.white, border:`1px solid ${C.border}`, borderRadius:12, padding:'1rem 1.2rem' }}>
                 <div style={{ fontSize:12, color:C.muted, marginBottom:6 }}>{k}</div>
-                <div style={{ fontFamily:'Noto Serif TC, serif', fontSize:24 }}>{v}</div>
+                <div style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:28, fontWeight:400 }}>{v}</div>
               </div>
             ))}
           </div>
