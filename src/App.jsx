@@ -685,7 +685,6 @@ export default function App() {
           </div>
         </div>
 
-          {/* Block slots panel */}
           <div style={card}>
             <div style={cHead}>🔒 手動封鎖時段</div>
             <div style={cBody}>
@@ -760,4 +759,4 @@ function StepBtn({ children, onClick }) {
       {children}
     </button>
   )
-} 
+}
