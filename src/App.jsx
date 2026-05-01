@@ -118,7 +118,11 @@ export default function App() {
   }
 
   // ── Price / duration ──────────────────────────────────────────────────────
-  const calcPrice  = () => plan === 'B' ? 800 * days : 150 * hours + (extraHalf ? 75 : 0)
+  const calcPrice  = () => {
+    if (plan === 'B') return 800 * days
+    if (hours === 1) return 150 + (extraHalf ? 75 : 0)
+    return 150 + (hours - 1) * 120 + (extraHalf ? 60 : 0)
+  }
   const calcDurMin = () => plan === 'B' ? days * 8 * 60 : hours * 60 + (extraHalf ? 30 : 0)
 
   // ── Taken slots ───────────────────────────────────────────────────────────
@@ -371,15 +375,15 @@ export default function App() {
 
       {/* ═══════════════ BOOKING ═══════════════ */}
       {tab==='booking' && (
-        <div style={{ padding:'2rem 1.5rem', maxWidth:940, margin:'0 auto' }}>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 300px', gap:'1.2rem' }}>
+        <div style={{ padding:'1rem', maxWidth:940, margin:'0 auto' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:'1.2rem' }}>
             <div>
               {/* Plan selector */}
               <div style={card}>
                 <div style={cHead}>選擇方案</div>
                 <div style={cBody}>
                   <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, marginBottom:'1.2rem' }}>
-                    {[['A','時租','$150','/ 1h','1小時起租，每追加30分 $75'],
+                    {[['A','時租','$150','/ 1h','1小時$150，2小時起每小時$120'],
                       ['B','日租','$800','/ 8h', '每日8小時整包，適合全日服務']].map(([p,l,price,unit,n]) => (
                       <div key={p} onClick={() => { setPlan(p); setExtraHalf(false) }}
                         style={{ border:`1.5px solid ${plan===p ? C.sageDark : C.border}`, borderRadius:16, padding:'1rem', cursor:'pointer', background: plan===p ? 'rgba(139,158,139,0.06)' : C.white, position:'relative', transition:'all .2s' }}>
@@ -407,7 +411,7 @@ export default function App() {
                         <StepBtn onClick={() => setHours(h => h+1)}>＋</StepBtn>
                         <button onClick={() => setExtraHalf(x => !x)}
                           style={{ marginLeft:8, border:`1px solid ${extraHalf ? C.sage : C.border}`, borderRadius:7, padding:'5px 12px', fontSize:12, cursor:'pointer', background: extraHalf ? 'rgba(139,158,139,0.1)' : C.white, color: extraHalf ? C.sageDark : C.muted, fontFamily:'inherit', transition:'all .2s' }}>
-                          +30分 $75
+                          +30分 $60
                         </button>
                       </div>
                     </div>
@@ -437,7 +441,7 @@ export default function App() {
                       onChange={e => { setDate(e.target.value); setSlot(null) }} />
                   </div>
                   <div style={lbl}>開始時間（灰色為已租用）</div>
-                  <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:5, marginTop:6 }}>
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:5, marginTop:6 }}>
                     {slots.map(sl => {
                       const tk = taken.has(sl), sel = slot===sl
                       return (
@@ -481,13 +485,13 @@ export default function App() {
 
             {/* Summary sidebar */}
             <div>
-              <div style={{ ...card, position:'sticky', top:16 }}>
+              <div style={{ ...card }}>
                 <div style={cHead}>費用摘要</div>
                 <div style={cBody}>
                   {[['方案', plan==='A' ? 'A 方案・時租' : 'B 方案・日租'],
                     ['日期', fmtDate(date)],
                     ['時段', slot ? slot+' 起' : '—'],
-                    ['時數/天數', plan==='A' ? `${hours+(extraHalf?0.5:0)} 小時` : `${days} 天`],
+                    ['時數/天數', plan==='A' ? `${hours+(extraHalf?0.5:0)} 小時` : `${days} 天（8h）`],
                   ].map(([k,v]) => (
                     <div key={k} style={{ display:'flex', justifyContent:'space-between', padding:'8px 0', borderBottom:`1px solid #E8E5DF`, fontSize:13 }}>
                       <span style={{ color:C.muted }}>{k}</span><span style={{ fontWeight:500 }}>{v}</span>
@@ -516,8 +520,8 @@ export default function App() {
 
       {/* ═══════════════ CALENDAR ═══════════════ */}
       {tab==='calendar' && (
-        <div style={{ padding:'1.5rem', maxWidth:900, margin:'0 auto' }}>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 280px', gap:'1.2rem' }}>
+        <div style={{ padding:'1rem', maxWidth:900, margin:'0 auto' }}>
+          <div style={{ display:'flex', flexDirection:'column', gap:'1.2rem' }}>
             <div style={card}>
               <div style={cBody}>
                 <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1.2rem' }}>
@@ -560,8 +564,8 @@ export default function App() {
                       <div style={{ fontSize:11, color: cc ? C.danger : C.sageDark, fontWeight:500, marginBottom:2 }}>
                         {fmtTime(b.startH,b.startM)} – {fmtTime(end.h,end.m)} {cc&&'（已取消）'}
                       </div>
-                      <div style={{ fontSize:13 }}>{b.name} · {b.phone}</div>
-                      <div style={{ fontSize:11, color:C.muted, marginTop:2 }}>{b.plan==='A'?'時租':'日租'} · ${b.price}{b.note?' · '+b.note:''}</div>
+                      <div style={{ fontSize:13 }}>預約已確認</div>
+                      <div style={{ fontSize:11, color:C.muted, marginTop:2 }}>{b.plan==='A'?'時租':'日租'} · ${b.price}{b.note&&isAdmin?' · '+b.note:''}</div>
                     </div>
                   )
                 })}
@@ -573,7 +577,7 @@ export default function App() {
 
       {/* ═══════════════ RULES ═══════════════ */}
       {tab==='rules' && (
-        <div style={{ padding:'1.5rem', maxWidth:700, margin:'0 auto' }}>
+        <div style={{ padding:'1rem', maxWidth:700, margin:'0 auto' }}>
           <div style={{ fontFamily:"'Cormorant Garamond', serif", fontSize:26, fontWeight:500, marginBottom:'0.3rem' }}>注意事項與規範</div>
           <div style={{ fontSize:13, color:C.muted, marginBottom:'1.5rem' }}>預約完成即視同租用人同意遵守以下規則</div>
           {RULES.map((r,i) => (
@@ -595,7 +599,7 @@ export default function App() {
 
       {/* ═══════════════ SPACE ═══════════════ */}
       {tab==='space' && (
-        <div style={{ padding:'1.5rem', maxWidth:700, margin:'0 auto' }}>
+        <div style={{ padding:'1rem', maxWidth:700, margin:'0 auto' }}>
           <div style={{ ...card, marginBottom:'1rem' }}>
             <div style={{ padding:'1.2rem 1.4rem', display:'flex', gap:12 }}>
               <div style={{ width:42, height:42, background:C.sageLight, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, flexShrink:0 }}>📍</div>
@@ -609,7 +613,7 @@ export default function App() {
             <div style={cHead}>出租方案</div>
             <div style={cBody}>
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-                {[['A 方案・時租','$150 / 1h','1小時起租，以30分為單位追加 $75'],
+                {[['A 方案・時租','$150 / 1h','1小時$150，2小時起每小時$120'],
                   ['B 方案・日租','$800 / 8h', '每日8小時整包，適合全日服務排程']].map(([t,p,n]) => (
                   <div key={t} style={{ border:`1px solid ${C.border}`, borderRadius:10, padding:'1rem', background:'#FAFAF7' }}>
                     <div style={{ fontSize:11, fontWeight:500, color:C.sageDark, letterSpacing:'0.06em', marginBottom:4 }}>{t}</div>
@@ -623,7 +627,7 @@ export default function App() {
           <div style={card}>
             <div style={cHead}>空間設備</div>
             <div style={cBody}>
-              <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:10 }}>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:8 }}>
                 {AMENITIES.map(a => (
                   <div key={a.name} style={{ display:'flex', gap:10, padding:'10px 12px', border:`1px solid #E8E5DF`, borderRadius:10 }}>
                     <div style={{ width:32, height:32, background:C.sageLight, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', fontSize:15, flexShrink:0 }}>{a.icon}</div>
@@ -643,7 +647,7 @@ export default function App() {
       {tab==='admin' && isAdmin && (
         <div style={{ padding:'1.5rem', maxWidth:960, margin:'0 auto' }}>
           {/* Stats */}
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, marginBottom:'1.2rem' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8, marginBottom:'1.2rem' }}>
             {[['今日預約', todayCount+' 筆'],['本月預約', monthCount+' 筆'],['本月收益', '$'+monthRevenue.toLocaleString()]].map(([k,v]) => (
               <div key={k} style={{ background:C.white, border:`1px solid ${C.border}`, borderRadius:12, padding:'1rem 1.2rem' }}>
                 <div style={{ fontSize:12, color:C.muted, marginBottom:6 }}>{k}</div>
